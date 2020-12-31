@@ -12,7 +12,7 @@ Resources:
   HelloWorldFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://aws-sam-cli-managed-default-samclisourcebucket-g8lbrlitnpwi/35a6e704da9dce15d72a2ad00ab78dad
+      CodeUri: s3://aws-sam-cli-managed-default-samclisourcebucket-g8lbrlitnpwi/c642246963ca29992939b3583b4b6b01
       Handler: helloworld.helloWorldHandler
       Runtime: nodejs12.x
       Layers:
@@ -26,7 +26,7 @@ Resources:
   ProductCRUDFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://aws-sam-cli-managed-default-samclisourcebucket-g8lbrlitnpwi/35a6e704da9dce15d72a2ad00ab78dad
+      CodeUri: s3://aws-sam-cli-managed-default-samclisourcebucket-g8lbrlitnpwi/c642246963ca29992939b3583b4b6b01
       Handler: dynamoDB.productHandler
       Runtime: nodejs12.x
       Layers:
