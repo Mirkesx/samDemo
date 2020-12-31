@@ -20,7 +20,7 @@ exports.helloWorldHandler = async (event, context) => {
         response = {
             'statusCode': 200,
             'body': JSON.stringify({
-                message: 'hello world!!',
+                message: 'Hello World Production',
                 // location: ret.data.trim()
             })
         }
