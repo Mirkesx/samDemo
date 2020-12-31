@@ -59,19 +59,6 @@ Resources:
               - ':'
               - Ref: AWS::AccountId
               - :table/inkProductsTable
-  inkProductsTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: inkProductsTable
-      AttributeDefinitions:
-      - AttributeName: productId
-        AttributeType: S
-      KeySchema:
-      - AttributeName: productId
-        KeyType: HASH
-      ProvisionedThroughput:
-        ReadCapacityUnits: 5
-        WriteCapacityUnits: 5
   TempConversionDepLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
