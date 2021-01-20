@@ -3,7 +3,7 @@ version = 0.1
 [default.deploy]
 [default.deploy.parameters]
 stack_name = "helloStack"
-s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-g8lbrlitnpwi"
+s3_bucket = "robot-reach-test-deploy"
 s3_prefix = "helloStack"
 region = "eu-north-1"
 confirm_changeset = true

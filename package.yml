@@ -12,7 +12,7 @@ Resources:
   HelloWorldFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://aws-sam-cli-managed-default-samclisourcebucket-g8lbrlitnpwi/35a6e704da9dce15d72a2ad00ab78dad
+      CodeUri: s3://robot-reach-test-deploy/12fbf47a2adffd9e04df2046f5046c7b
       Handler: helloworld.helloWorldHandler
       Runtime: nodejs12.x
       Layers:
@@ -23,61 +23,19 @@ Resources:
           Properties:
             Path: /hello
             Method: get
-  ProductCRUDFunction:
-    Type: AWS::Serverless::Function
+  MyDBSmall:
+    Type: AWS::RDS::DBInstance
     Properties:
-      CodeUri: s3://aws-sam-cli-managed-default-samclisourcebucket-g8lbrlitnpwi/35a6e704da9dce15d72a2ad00ab78dad
-      Handler: dynamoDB.productHandler
-      Runtime: nodejs12.x
-      Layers:
-      - Ref: TempConversionDepLayer
-      Events:
-        ProductPostAPI:
-          Type: Api
-          Properties:
-            Path: /product
-            Method: POST
-        ProductGetAPI:
-          Type: Api
-          Properties:
-            Path: /product/{productId}
-            Method: ANY
-      Policies:
-      - Version: '2012-10-17'
-        Statement:
-        - Effect: Allow
-          Action:
-          - dynamodb:DeleteItem
-          - dynamodb:GetItem
-          - dynamodb:PutItem
-          - dynamodb:UpdateItem
-          Resource:
-            Fn::Join:
-            - ''
-            - - 'arn:aws:dynamodb:'
-              - Ref: AWS::Region
-              - ':'
-              - Ref: AWS::AccountId
-              - :table/inkProductsTable
-  inkProductsTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: inkProductsTable
-      AttributeDefinitions:
-      - AttributeName: productId
-        AttributeType: S
-      KeySchema:
-      - AttributeName: productId
-        KeyType: HASH
-      ProvisionedThroughput:
-        ReadCapacityUnits: 5
-        WriteCapacityUnits: 5
+      DBInstanceIdentifier: robot-reach-instance-cf
+      DBSnapshotIdentifier: arn:aws:rds:eu-north-1:013058818715:snapshot:empty-robot-reach-final-snapshot
+      DeletionProtection: false
+      Engine: postgres
   TempConversionDepLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
       LayerName: hello-world-dependencies
       Description: Dependencies for uuid
-      ContentUri: s3://aws-sam-cli-managed-default-samclisourcebucket-g8lbrlitnpwi/3381f9e7d6a2b70660ff4ee55b602e51
+      ContentUri: s3://robot-reach-test-deploy/3381f9e7d6a2b70660ff4ee55b602e51
       CompatibleRuntimes:
       - nodejs8.10
       - nodejs12.x
@@ -100,3 +58,7 @@ Outputs:
       Fn::GetAtt:
       - HelloWorldFunctionRole
       - Arn
+  InstanceId:
+    Description: InstanceId of the newly created RDS Instance
+    Value:
+      Ref: MyDBSmall
