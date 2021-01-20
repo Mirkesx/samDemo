@@ -1,30 +1,168 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  Hello World Example
+  Emblematic deployment. Environment:
 
-  Sample SAM Template for Hello World Example
+  Cloud Formation deployment for lambda functions, bucket S3 and RDS instance
   
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
-Globals:
-  Function:
-    Timeout: 3
 
 Resources:
-  HelloWorldFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+  Bucket1:
+    Type: 'AWS::S3::Bucket'
+  addChildrenToAssets:
+    Type: 'AWS::Serverless::Function'
     Properties:
-      CodeUri: code/
-      Handler: helloworld.helloWorldHandler
-      Runtime: nodejs12.x
+      Handler: index.handler
+      Runtime: nodejs8.10
+      CodeUri: code/addChildrenToAssets/
+      Description: ''
+      MemorySize: 128
+      Timeout: 60
+      Role: 'arn:aws:iam::013058818715:role/reachLambdaRole'
       Layers:
-        - !Ref TempConversionDepLayer
+        - !Ref DependanciesNodeJSLayer
+  DBQuery:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs8.10
+      CodeUri: code/DBQuery/
+      Description: ''
+      MemorySize: 128
+      Timeout: 180
+      Role: 'arn:aws:iam::013058818715:role/reachLambdaRole'
+      Layers:
+        - !Ref DependanciesNodeJSLayer
+  deleteAsset:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs8.10
+      CodeUri: code/deleteAsset/
+      Description: ''
+      MemorySize: 128
+      Timeout: 3
+      Role: 'arn:aws:iam::013058818715:role/reachLambdaRole'
+      Layers:
+        - !Ref DependanciesNodeJSLayer
+  getConfig:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs8.10
+      CodeUri: code/getConfig/
+      Description: ''
+      MemorySize: 128
+      Timeout: 30
+      Role: 'arn:aws:iam::013058818715:role/reachLambdaRole'
+      Layers:
+        - !Ref DependanciesNodeJSLayer
+  moveVideo:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs8.10
+      CodeUri: code/moveVideo/
+      Description: ''
+      MemorySize: 512
+      Timeout: 300
+      Role: 'arn:aws:iam::013058818715:role/reachLambdaRole'
+      Layers:
+        - !Ref DependanciesNodeJSLayer
+  onVideoTranscoded:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs8.10
+      CodeUri: code/onVideoTranscoded/
+      Description: ''
+      MemorySize: 512
+      Timeout: 900
+      Role: 'arn:aws:iam::013058818715:role/reachLambdaRole'
       Events:
-        HelloWorld:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+        BucketEvent1:
+          Type: S3
           Properties:
-            Path: /hello
-            Method: get
+            Bucket:
+              Ref: Bucket1
+            Events:
+              - 's3:ObjectCreated:*'
+            Filter:
+              S3Key:
+                Rules:
+                  - Name: prefix
+                    Value: outputs/
+      Layers:
+        - !Ref DependanciesNodeJSLayer
+  sendNotification:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs8.10
+      CodeUri: code/sendNotification/
+      Description: ''
+      MemorySize: 128
+      Timeout: 60
+      Role: 'arn:aws:iam::013058818715:role/reachLambdaRole'
+      Layers:
+        - !Ref DependanciesNodeJSLayer
+  test:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs10.x
+      CodeUri: code/test/
+      Description: ''
+      MemorySize: 128
+      Timeout: 60
+      Role: 'arn:aws:iam::013058818715:role/reachLambdaRole'
+      Environment:
+        Variables:
+          DEV_myVar: '0'
+          PROD_myVar: '2'
+          STAGING_myVar: '1'
+      Layers:
+        - !Ref DependanciesNodeJSLayer
+  transcodeVideo:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs8.10
+      CodeUri: code/transcodeVideo/
+      Description: ''
+      MemorySize: 256
+      Timeout: 300
+      Role: 'arn:aws:iam::013058818715:role/reachLambdaRole'
+      Events:
+        BucketEvent1:
+          Type: S3
+          Properties:
+            Bucket:
+              Ref: Bucket1
+            Events:
+              - 's3:ObjectCreated:*'
+            Filter:
+              S3Key:
+                Rules:
+                  - Name: prefix
+                    Value: inputs/
+      Layers:
+        - !Ref DependanciesNodeJSLayer
+  unzip:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs8.10
+      CodeUri: code/transcodeVideo/
+      Description: ''
+      MemorySize: 2048
+      Timeout: 421
+      Role: 'arn:aws:iam::013058818715:role/reachLambdaRole'
+      Layers:
+        - !Ref DependanciesNodeJSLayer
+
+
   EmblematicDB: 
     Type: "AWS::RDS::DBInstance"
     Properties:
@@ -33,14 +171,14 @@ Resources:
       DeletionProtection: True
       Engine: "postgres"
   
-  TempConversionDepLayer:
+  DependanciesNodeJSLayer:
         Type: AWS::Serverless::LayerVersion
         Properties:
             LayerName: lambda-functions-dependencies
             ContentUri: dependencies/
             CompatibleRuntimes:
               - nodejs8.10
-              - nodejs12.x
+              - nodejs10.x
             LicenseInfo: 'MIT'
             RetentionPolicy: Retain
 
