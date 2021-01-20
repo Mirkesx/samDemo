@@ -12,7 +12,7 @@ Resources:
   HelloWorldFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://robot-reach-test-deploy/203fcd8db330ac431e0cd9ff198b5e92
+      CodeUri: s3://robot-reach-test-deploy/12fbf47a2adffd9e04df2046f5046c7b
       Handler: helloworld.helloWorldHandler
       Runtime: nodejs12.x
       Layers:
@@ -23,6 +23,13 @@ Resources:
           Properties:
             Path: /hello
             Method: get
+  MyDBSmall:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: robot-reach-instance-cf
+      DBSnapshotIdentifier: arn:aws:rds:eu-north-1:013058818715:snapshot:empty-robot-reach-final-snapshot
+      DeletionProtection: false
+      Engine: postgres
   TempConversionDepLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
@@ -51,3 +58,7 @@ Outputs:
       Fn::GetAtt:
       - HelloWorldFunctionRole
       - Arn
+  InstanceId:
+    Description: InstanceId of the newly created RDS Instance
+    Value:
+      Ref: MyDBSmall

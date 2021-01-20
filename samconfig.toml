@@ -3,7 +3,7 @@ version = 0.1
 [default.deploy]
 [default.deploy.parameters]
 stack_name = "helloStack"
-s3_bucket = "robot-reach-test-deploy/203fcd8db330ac431e0cd9ff198b5e92"
+s3_bucket = "robot-reach-test-deploy"
 s3_prefix = "helloStack"
 region = "eu-north-1"
 confirm_changeset = true

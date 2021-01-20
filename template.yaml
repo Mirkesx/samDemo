@@ -25,19 +25,13 @@ Resources:
           Properties:
             Path: /hello
             Method: get
-  inkProductsTable:
-    Type: 'AWS::DynamoDB::Table'
+  MyDBSmall: 
+    Type: "AWS::RDS::DBInstance"
     Properties:
-      TableName: inkProductsTable
-      AttributeDefinitions:
-        - AttributeName: productId
-          AttributeType: S
-      KeySchema:
-        - AttributeName: productId
-          KeyType: HASH
-      ProvisionedThroughput:
-        ReadCapacityUnits: 5
-        WriteCapacityUnits: 5  
+      DBInstanceIdentifier: robot-reach-instance-cf
+      DBSnapshotIdentifier: arn:aws:rds:eu-north-1:013058818715:snapshot:empty-robot-reach-final-snapshot
+      DeletionProtection: True
+      Engine: "postgres"
   
   TempConversionDepLayer:
         Type: AWS::Serverless::LayerVersion
@@ -64,3 +58,6 @@ Outputs:
   HelloWorldFunctionIamRole:
     Description: "Implicit IAM Role created for Hello World function"
     Value: !GetAtt HelloWorldFunctionRole.Arn
+  InstanceId:
+    Description: InstanceId of the newly created RDS Instance
+    Value: !Ref MyDBSmall 
