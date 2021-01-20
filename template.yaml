@@ -58,6 +58,6 @@ Outputs:
   HelloWorldFunctionIamRole:
     Description: "Implicit IAM Role created for Hello World function"
     Value: !GetAtt HelloWorldFunctionRole.Arn
-  InstanceId:
+  MyDBSmall:
     Description: InstanceId of the newly created RDS Instance
     Value: !Ref MyDBSmall 
